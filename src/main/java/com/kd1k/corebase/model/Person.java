@@ -1,6 +1,7 @@
 package com.kd1k.corebase.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.sql.Date;
@@ -15,16 +16,23 @@ import java.sql.Date;
 public class Person {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    private String fullName;
+
+    @NotBlank(message = "Name is Mandatory")
+    private String name;
+
+    @NotBlank(message = "CPF is Mandatory")
+    @Column(unique = true)
     private String cpf;
+
     private Date birthdate;
 
-    public Person(String fullName, String cpf, Date birthdate) {
-
-        this.fullName = fullName;
+    public Person(String name, String cpf, Date birthdate) {
+        this.name = name;
         this.cpf = cpf;
         this.birthdate = birthdate;
     }
+
+
 }
