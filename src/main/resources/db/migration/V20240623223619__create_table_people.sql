@@ -1,0 +1,6 @@
+CREATE TABLE people(
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    cpf VARCHAR(11) NOT NULL UNIQUE,
+    birthdate DATE NOT NULL
+)
