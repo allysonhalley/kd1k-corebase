@@ -1,0 +1,36 @@
+version: "3.4"
+services:
+  kd1k-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8081:8080'
+    environment:
+      - SPRING_DATASOURCE_url=jdbc:postgresql://kd1k_postgres:5432/kd1kdb
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=keypass
+    depends_on:
+      - kd1k-postgres
+    networks:
+      kd1k-net:
+    restart: on-failure
+  kd1k-postgres:
+    image: 'postgres:latest'
+    container_name: kd1k_postgres
+    environment:
+      - POSTGRES_DB=kd1kdb
+      - POSTGRES_PASSWORD=keypass
+      - POSTGRES_USER=admin
+    ports:
+      - 5433:5432
+    volumes:
+      - ./postgres-db:/var/lib/postgresql/data
+    networks:
+      kd1k-net:
+
+volumes:
+  postgres-db:
+
+networks:
+  kd1k-net:
