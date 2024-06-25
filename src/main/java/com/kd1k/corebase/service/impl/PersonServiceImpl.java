@@ -7,6 +7,10 @@ import com.kd1k.corebase.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +23,25 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public List<Person> getAllPerson() {
         return personRepository.findAll();
+    }
+
+    @Override
+    public List<Person> getAllPersonByName(String name) {
+        if (name == null || name.isEmpty()) return personRepository.findAll();
+        return personRepository.findPersonByNameContaining(name).stream().toList();
+    }
+
+    @Override
+    public Person getPersonByCpf(String cpf) {
+        return personRepository.findPersonByCpf(cpf).get();
+    }
+
+    @Override
+    public List<Person> getAllPersonByBirthdate(String birthdate) {
+
+        return personRepository
+                .findPersonByBirthdate(convertStringToDate(birthdate))
+                .stream().toList();
     }
 
     @Override
@@ -41,12 +64,8 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public Person createPerson(PersonRegisterDTO personRegisterDTO) {
-        Person person = personRegisterDTO.toPerson();
-        if (validatePerson(person)) {
-            Person savedPerson = personRepository.save(person);
-            return savedPerson;
-        }
-        return null;
+        Person person = new Person(personRegisterDTO);
+        return personRepository.save(person);
     }
 
     @Override
@@ -56,7 +75,7 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public Person updatePerson(Person person) {
-
+        person.plusOneDay();
         if (validatePerson(person) && personRepository.existsById(person.getId())) {
             Person updatedPerson = personRepository.save(person);
             return updatedPerson;
@@ -67,6 +86,11 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public void deletePerson(String id) {
         personRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean ifExists(String id) {
+        return false;
     }
 
     private boolean validatePerson(Person person) {
@@ -85,5 +109,11 @@ public class PersonServiceImpl implements PersonService {
             return false;
         }
         return true;
+    }
+
+    private Date convertStringToDate(String date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        Date birthDate = Date.valueOf(LocalDate.parse(date, formatter));
+        return birthDate;
     }
 }

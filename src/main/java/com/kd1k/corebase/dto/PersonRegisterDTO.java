@@ -15,7 +15,7 @@ public record PersonRegisterDTO(
 ) {
 
     public Person toPerson() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         Date birthDate = Date.valueOf(LocalDate.parse(this.birthDate, formatter));
         return new Person(this.name(), this.cpf(), birthDate);
     }
